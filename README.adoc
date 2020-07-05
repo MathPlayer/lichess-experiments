@@ -1,0 +1,7 @@
+Lichess experiments
+===================
+
+General
+-------
+
+This repository keeps track of my experiments with the lichess API.
