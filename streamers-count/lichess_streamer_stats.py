@@ -5,6 +5,7 @@
 # System imports.
 import json
 import pathlib
+import requests
 import sys
 import time
 
@@ -31,8 +32,16 @@ def update_streamers_file(new_info):
 
 def main():
     """ Entrypoint for calling this script. """
+    # Get live streamers.
     client = berserk.Client()
     streamers = client.users.get_live_streamers()
+
+    # Update with {'front-page': true/false}.
+    # Abuses the fact that the main page lists the streamers ids as part of the relative URLs).
+    r = requests.get('https://lichess.org/')
+    front_page_ids = [x[0:x.find('"')] for x in str(r.content).split('/streamer/')[1:]]
+    streamers = [dict(x, **{'front-page': x['id'] in front_page_ids}) for x in streamers]
+
     update_streamers_file(streamers)
 
 
